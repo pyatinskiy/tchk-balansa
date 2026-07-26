@@ -1,4 +1,11 @@
 import { getPodcastEpisodes } from "../lib/rss";
+function formatDate(date: string) {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
+}
 
 export default async function Podcast() {
   const episodes = await getPodcastEpisodes();
