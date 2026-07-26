@@ -1,19 +1,35 @@
 import { getPodcastEpisodes } from "../lib/rss";
 import PodcastCards from "./PodcastCards";
 
+
 export default async function Podcast() {
+
   const episodes = await getPodcastEpisodes();
 
-  const preparedEpisodes = episodes.slice(0, 6).map((episode) => ({
-    title: episode.title,
-    link: episode.link,
-    pubDate: episode.pubDate,
-    audio: episode.enclosure?.url || "",
-    image: episode.itunes?.image || "",
 
-    // временно убираем грязный RSS
-    summary: "",
-  }));
+  const cards = episodes
+    .slice(0, 6)
+    .map((episode) => ({
+
+      title: episode.title,
+
+      link: episode.link,
+
+      pubDate: episode.pubDate,
+
+      summary:
+        episode.aiDescription ||
+        cleanSummary(
+          episode.itunes?.summary || ""
+        ),
+
+      audio:
+        episode.enclosure?.url || "",
+
+      image:
+        episode.itunes?.image || "",
+
+    }));
 
 
   return (
@@ -32,7 +48,7 @@ export default async function Podcast() {
 
 
         <PodcastCards
-          episodes={preparedEpisodes}
+          episodes={cards}
         />
 
 
@@ -40,4 +56,19 @@ export default async function Podcast() {
 
     </main>
   );
+}
+
+
+
+function cleanSummary(text:string){
+
+  return text
+    .replace(/<p>/g,"")
+    .replace(/<\/p>/g,"\n")
+    .replace(/<br\s*\/?>/g,"\n")
+    .replace(/<[^>]*>/g,"")
+    .replace(/\s+/g," ")
+    .trim()
+    .slice(0,300);
+
 }
