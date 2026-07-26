@@ -2,9 +2,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white text-black flex flex-col items-center justify-center px-6">
       <div className="max-w-3xl text-center">
-        <h1 className="text-6xl font-semibold tracking-tight">
-          тчк<span className="text-orange-500">.</span> баланса
-        </h1>
+        <h1 className="text-7xl font-bold tracking-tight">
+  тчк<span className="text-orange-500">.</span> баланса
+</h1>
 
         <p className="mt-8 text-2xl text-zinc-600">
           Бухгалтерия. Финансы. Технологии.
@@ -20,7 +20,7 @@ export default function Home() {
             href="#"
             className="rounded-full bg-black px-6 py-3 text-white hover:bg-zinc-800"
           >
-            Слушать подкаст
+            ▶ Слушать подкаст
           </a>
 
           <a
