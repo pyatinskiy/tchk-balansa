@@ -12,6 +12,38 @@ export default function Home() {
 >
   ☰
 </button>
+{menuOpen && (
+  <div className="fixed inset-0 z-50 bg-white p-12">
+
+    <button
+      onClick={() => setMenuOpen(false)}
+      className="absolute top-8 left-8 text-2xl hover:opacity-60 transition"
+    >
+      ✕
+    </button>
+
+    <div className="mt-24 flex flex-col gap-8 text-4xl font-semibold">
+
+      <a href="#">
+        01 Подкаст
+      </a>
+
+      <a href="#">
+        02 Курсы
+      </a>
+
+      <a href="#">
+        03 Блог
+      </a>
+
+      <a href="#">
+        04 О проекте
+      </a>
+
+    </div>
+
+  </div>
+)}
       <div className="max-w-3xl text-center">
 
         <h1 className="text-7xl font-bold tracking-tight">
