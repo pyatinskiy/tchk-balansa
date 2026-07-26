@@ -1,82 +1,63 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
-const genAI = new GoogleGenerativeAI(
-  process.env.GEMINI_API_KEY!
-);
+const client = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
+
 
 export async function POST(request: Request) {
 
-  try {
+  const body = await request.json();
 
-    const body = await request.json();
-
-    const title = body.title;
-    const description = body.description;
+  console.log("BODY:", body);
 
 
-    const prompt = `
+  const response = await client.chat.completions.create({
+
+    model: "llama-3.3-70b-versatile",
+
+    messages: [
+
+      {
+        role: "system",
+        content:
+          "Ты профессиональный редактор подкаста. Пиши современно, умно, без канцелярита.",
+      },
+
+      {
+        role: "user",
+        content: `
 Ты редактор подкаста "тчк. баланса".
 
-Подготовь карточку выпуска.
-
-Название:
-${title}
+Название выпуска:
+${body.title}
 
 Описание:
-${description}
+${body.description}
 
-Ответ строго в формате:
 
-Заголовок:
-...
+Сделай карточку выпуска:
+
+Короткий заголовок:
 
 О чем выпуск:
-...
 
-Главные мысли:
-• ...
-• ...
-• ...
+3 главные мысли:
+• 
+• 
+•
 
 Кому будет полезно:
-...
-
-Стиль:
-современное технологичное медиа.
-Умно, живо, без канцелярита.
-`;
-
-
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-    });
-
-
-    const result = await model.generateContent(prompt);
-
-
-    const text = result.response.text();
-
-
-    return Response.json({
-      text,
-    });
-
-
-  } catch(error:any) {
-
-    console.error(error);
-
-    return Response.json(
-      {
-        error: error.message
+`,
       },
-      {
-        status:500
-      }
-    );
 
-  }
+    ],
+
+  });
+
+
+  return Response.json({
+    text: response.choices[0].message.content,
+  });
 
 }
