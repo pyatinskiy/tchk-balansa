@@ -5,23 +5,16 @@ const client = new OpenAI({
 });
 
 export async function POST(request: Request) {
-  const body = await request.json();
 
-  const title = body.title || "";
-  const description = body.description || "";
+  try {
 
-  if (!title && !description) {
-    return Response.json(
-      {
-        error: "Нет данных для анализа",
-      },
-      {
-        status: 400,
-      }
-    );
-  }
+    const body = await request.json();
 
-  const prompt = `
+    const title = body.title;
+    const description = body.description;
+
+
+    const prompt = `
 Ты редактор подкаста "тчк. баланса".
 
 Напиши красивое описание выпуска.
@@ -32,42 +25,64 @@ ${title}
 Описание из RSS:
 ${description}
 
-Верни только JSON без markdown:
+Формат:
 
-{
-"title": "короткий красивый заголовок",
-"description": "описание выпуска в 2-3 предложениях",
-"keyPoints": [
-"мысль 1",
-"мысль 2",
-"мысль 3"
-],
-"audience": "кому будет полезно"
-}
+Короткий заголовок:
+...
+
+О чем выпуск:
+...
+
+3 главные мысли:
+• ...
+• ...
+• ...
+
+Кому будет полезно:
+...
 
 Стиль:
-современно, умно, но без канцелярита.
+современно, умно, без канцелярита.
 Как редактор технологичного медиа.
 `;
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4.1-mini",
-    messages: [
+
+    const response = await client.chat.completions.create({
+
+      model: "gpt-4.1-mini",
+
+      messages: [
+        {
+          role: "system",
+          content: "Ты профессиональный редактор подкастов.",
+        },
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+
+    });
+
+
+    return Response.json({
+      text: response.choices[0].message.content,
+    });
+
+
+  } catch (error: any) {
+
+    console.error("OPENAI ERROR:", error);
+
+    return Response.json(
       {
-        role: "system",
-        content: "Ты профессиональный редактор подкастов.",
+        error: error.message
       },
       {
-        role: "user",
-        content: prompt,
-      },
-    ],
-  });
+        status: 500
+      }
+    );
 
+  }
 
-  const content = response.choices[0].message.content;
-
-return Response.json(
-  JSON.parse(content || "{}")
-);
 }
