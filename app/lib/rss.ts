@@ -1,164 +1,58 @@
 import Parser from "rss-parser";
 
-const parser = new Parser();
+
+const parser = new Parser({
+
+  customFields: {
+    item: [
+      ["itunes:image", "itunesImage"],
+      ["itunes:summary", "itunesSummary"],
+      ["enclosure", "enclosure"],
+    ],
+  },
+
+});
 
 
-export type Episode = {
-  title?: string;
-  link?: string;
-  pubDate?: string;
-  summary?: string;
-  audio?: string;
-  image?: string;
-};
+export async function getPodcastEpisodes() {
 
 
-function cleanHtml(text: string = "") {
-  return text
-    .replace(/<script[^>]*>.*?<\/script>/gis, "")
-    .replace(/<style[^>]*>.*?<\/style>/gis, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+  const feedUrl = "https://podster.fm/rss.xml?pid=91601";
 
 
-async function generateDescription(
-  title: string,
-  description: string
-) {
-
-  try {
-
-    const response = await fetch(
-      "http://localhost:3000/api/ai",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          description,
-        }),
-      }
-    );
+  const feed = await parser.parseURL(feedUrl);
 
 
-    const data = await response.json();
+  return feed.items.map((item) => ({
 
 
-    return {
-      description:
-        data.description || description,
-
-      highlights:
-        data.highlights || [],
-    };
+    title: item.title || "",
 
 
-  } catch (error) {
-
-    console.error(
-      "AI description error:",
-      error
-    );
+    link: item.link || "",
 
 
-    return {
-      description,
-      highlights: [],
-    };
-
-  }
-
-}
+    pubDate: item.pubDate || "",
 
 
-
-export async function getPodcastEpisodes(): Promise<Episode[]> {
-
-
-  const feed =
-    await parser.parseURL(
-      "https://podster.fm/podcasts/tchk-balansa/feed"
-    );
+    summary:
+      item.itunesSummary ||
+      item.contentSnippet ||
+      item.content ||
+      "",
 
 
-  const episodes = await Promise.all(
-
-    feed.items.map(
-      async (item) => {
-
-
-        const title =
-          item.title || "";
+    audio:
+      item.enclosure?.url ||
+      "",
 
 
-        const rawDescription =
-          item.content ||
-          item.contentSnippet ||
-          item.summary ||
-          "";
+    image:
+      item.itunesImage?.href ||
+      item.itunesImage ||
+      "",
 
 
-        const cleanDescription =
-          cleanHtml(rawDescription);
-
-
-
-        const ai =
-          await generateDescription(
-            title,
-            cleanDescription
-          );
-
-
-
-        return {
-
-          // ВАЖНО:
-          // название выпуска НЕ меняем
-
-          title,
-
-
-          link:
-            item.link || "",
-
-
-          pubDate:
-            item.pubDate || "",
-
-
-          summary:
-            ai.description,
-
-
-          highlights:
-            ai.highlights,
-
-
-          audio:
-            item.enclosure?.url || "",
-
-
-          image:
-            // @ts-ignore
-            item.itunes?.image ||
-            "",
-
-        };
-
-      }
-    )
-
-  );
-
-
-  return episodes;
+  }));
 
 }

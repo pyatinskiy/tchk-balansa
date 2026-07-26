@@ -1,4 +1,5 @@
 type Episode = {
+
   title?: string;
   link?: string;
   pubDate?: string;
@@ -6,27 +7,7 @@ type Episode = {
   audio?: string;
   image?: string;
 
-  ai?: {
-    title?: string;
-    description?: string;
-    highlights?: string[];
-  };
 };
-
-
-function cleanHtml(text?: string) {
-  if (!text) return "";
-
-  return text
-    .replace(/<script[^>]*>.*?<\/script>/gis, "")
-    .replace(/<style[^>]*>.*?<\/style>/gis, "")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
-    .replace(/\s+/g, " ")
-    .trim();
-}
 
 
 export default function PodcastCards({
@@ -35,174 +16,112 @@ export default function PodcastCards({
   episodes: Episode[];
 }) {
 
-  return (
-    <div className="mt-16 grid gap-8">
 
-      {episodes.map((episode, index) => {
+return (
 
-
-        const description =
-          episode.ai?.description ||
-          cleanHtml(episode.summary);
+<div className="mt-16 grid gap-8">
 
 
-        const highlights =
-          episode.ai?.highlights || [];
+{episodes.map((episode,index)=>(
 
 
-        return (
-
-          <article
-            key={index}
-            className="
-              border
-              border-zinc-200
-              rounded-3xl
-              p-8
-              hover:border-orange-400
-              transition
-              bg-white
-            "
-          >
-
-            <div className="flex flex-col gap-6">
+<article
+key={index}
+className="
+border border-zinc-200
+rounded-3xl
+p-8
+"
+>
 
 
-              {episode.image && (
-
-                <img
-                  src={episode.image}
-                  alt=""
-                  className="
-                    w-32
-                    h-32
-                    rounded-2xl
-                    object-cover
-                  "
-                />
-
-              )}
+<div className="flex flex-col gap-6">
 
 
+{episode.image && (
 
-              <div>
+<img
+src={episode.image}
+alt={episode.title}
+className="
+w-40
+h-40
+rounded-2xl
+object-cover
+"
+/>
 
-                <p className="text-sm text-zinc-400">
-                  {episode.pubDate}
-                </p>
-
-
-                {/* ВАЖНО:
-                    название берем только из RSS.
-                    AI его никогда не меняет.
-                */}
-
-                <h2 className="
-                  mt-3
-                  text-3xl
-                  font-semibold
-                  leading-tight
-                ">
-                  {episode.title}
-                </h2>
+)}
 
 
-              </div>
+<div>
+
+<p className="text-sm text-zinc-400">
+{episode.pubDate}
+</p>
 
 
-
-              {description && (
-
-                <p className="
-                  text-zinc-700
-                  leading-8
-                  text-lg
-                ">
-                  {description}
-                </p>
-
-              )}
+<h2 className="mt-3 text-3xl font-semibold">
+{episode.title}
+</h2>
 
 
+</div>
 
 
-              {highlights.length > 0 && (
+<p className="text-zinc-600 leading-7">
 
-                <div className="
-                  border-l-4
-                  border-orange-400
-                  pl-5
-                  space-y-3
-                ">
+{episode.summary
+?.replace(/<[^>]*>/g," ")
+.replace(/\s+/g," ")
+.slice(0,500)}
 
-                  {highlights.map((item, i) => (
-
-                    <p
-                      key={i}
-                      className="
-                        text-zinc-600
-                      "
-                    >
-                      • {item}
-                    </p>
-
-                  ))}
+</p>
 
 
-                </div>
+{episode.audio && (
 
-              )}
+<audio
+controls
+className="w-full"
+>
 
+<source
+src={episode.audio}
+type="audio/mpeg"
+/>
 
+</audio>
 
-
-              {episode.audio && (
-
-                <audio
-                  controls
-                  className="w-full"
-                >
-
-                  <source
-                    src={episode.audio}
-                    type="audio/mpeg"
-                  />
-
-                </audio>
-
-              )}
+)}
 
 
+<a
+href={episode.link}
+target="_blank"
+className="
+text-orange-500
+hover:underline
+"
+>
+
+Открыть выпуск →
+
+</a>
 
 
-              {episode.link && (
-
-                <a
-                  href={episode.link}
-                  target="_blank"
-                  className="
-                    text-sm
-                    text-orange-500
-                    hover:underline
-                  "
-                >
-                  Открыть выпуск на Podster →
-                </a>
-
-              )}
+</div>
 
 
-            </div>
+</article>
 
 
-          </article>
-
-        );
+))}
 
 
-      })}
+</div>
+
+);
 
 
-    </div>
-  );
 }
