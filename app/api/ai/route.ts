@@ -5,52 +5,17 @@ const client = new OpenAI({
 });
 
 export async function POST(request: Request) {
-
   try {
-
     const body = await request.json();
 
-    const title = body.title;
-    const description = body.description;
-
-
-    const prompt = `
-Ты редактор подкаста "тчк. баланса".
-
-Напиши красивое описание выпуска.
-
-Название:
-${title}
-
-Описание из RSS:
-${description}
-
-Формат:
-
-Короткий заголовок:
-...
-
-О чем выпуск:
-...
-
-3 главные мысли:
-• ...
-• ...
-• ...
-
-Кому будет полезно:
-...
-
-Стиль:
-современно, умно, без канцелярита.
-Как редактор технологичного медиа.
-`;
-
+    console.log("BODY:", body);
+    console.log(
+      "KEY EXISTS:",
+      !!process.env.OPENAI_API_KEY
+    );
 
     const response = await client.chat.completions.create({
-
       model: "gpt-4.1-mini",
-
       messages: [
         {
           role: "system",
@@ -58,31 +23,36 @@ ${description}
         },
         {
           role: "user",
-          content: prompt,
+          content: `
+Напиши описание выпуска подкаста.
+
+Название:
+${body.title}
+
+Описание:
+${body.description}
+          `,
         },
       ],
-
     });
-
 
     return Response.json({
       text: response.choices[0].message.content,
     });
 
-
   } catch (error: any) {
 
-    console.error("OPENAI ERROR:", error);
+    console.error("OPENAI ERROR:");
+    console.error(error);
 
     return Response.json(
       {
-        error: error.message
+        error: error.message,
+        details: error,
       },
       {
-        status: 500
+        status: 500,
       }
     );
-
   }
-
 }
