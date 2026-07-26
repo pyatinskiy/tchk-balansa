@@ -1,11 +1,5 @@
 import { getPodcastEpisodes } from "../lib/rss";
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(date));
-}
+import PodcastCards from "./PodcastCards";
 
 export default async function Podcast() {
   const episodes = await getPodcastEpisodes();
@@ -23,89 +17,7 @@ export default async function Podcast() {
           Бухгалтерия. Финансы. Технологии.
         </p>
 
-        <div className="mt-16 grid gap-8">
-
-          {episodes.slice(0, 6).map((episode: any) => (
-
-            <article
-              key={episode.guid}
-              className="
-                border border-zinc-200 
-                rounded-3xl 
-                p-8
-                hover:border-orange-400
-                transition
-              "
-            >
-
-              <div className="flex flex-col gap-5">
-
-                <div>
-                  <p className="text-sm text-zinc-400">
-                    {formatDate(episode.pubDate)}
-                  </p>
-{episode.itunes?.image && (
-  <img
-    src={episode.itunes.image}
-    alt={episode.title}
-    className="
-      w-32
-      h-32
-      rounded-2xl
-      object-cover
-      mb-5
-    "
-  />
-)}
-                  <h2 className="mt-3 text-3xl font-semibold">
-                    {episode.title}
-                  </h2>
-                </div>
-
-
-                <p className="text-zinc-600 leading-7">
-  {episode.itunes?.summary
-    ?.replace(/<[^>]*>/g, "")
-    ?.slice(0, 220)}
-  ...
-</p>
-
-
-                <div className="flex items-center gap-4">
-
-                  <audio
-                    controls
-                    className="w-full"
-                  >
-                    <source
-                      src={episode.enclosure.url}
-                      type="audio/mpeg"
-                    />
-                  </audio>
-
-                </div>
-
-
-                <a
-                  href={episode.link}
-                  target="_blank"
-                  className="
-                    text-sm
-                    text-orange-500
-                    hover:underline
-                  "
-                >
-                  Открыть выпуск на Podster →
-                </a>
-
-
-              </div>
-
-            </article>
-
-          ))}
-
-        </div>
+        <PodcastCards episodes={episodes.slice(0, 6)} />
 
       </div>
 
