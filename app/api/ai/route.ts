@@ -5,163 +5,235 @@ const client = new Groq({
 });
 
 
+function cleanHtml(text: string = "") {
+  return text
+    .replace(/<script[^>]*>.*?<\/script>/gs, "")
+    .replace(/<style[^>]*>.*?<\/style>/gs, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+
+function removeNoise(text: string) {
+
+  const garbage = [
+    "Основные подходы к подготовке выпуска",
+    "Основные элементы учетной политики выпуска",
+    "Нормативные ссылки из выпуска",
+    "Список используемых сокращений",
+    "События после отчетной даты",
+    "Непрерывность деятельности",
+    "Исправление ошибок в подкасте",
+    "Прочие условия",
+    "Технические вопросы"
+  ];
+
+  let result = text;
+
+  for (const item of garbage) {
+    const index = result.indexOf(item);
+
+    if (index !== -1) {
+      result = result.slice(0, index);
+    }
+  }
+
+  return result.trim();
+}
+
+
+
 export async function POST(request: Request) {
 
   try {
 
     const body = await request.json();
 
-    console.log("BODY:", body);
+
+    const title = body.title || "";
+
+    const description = removeNoise(
+      cleanHtml(body.description)
+    );
 
 
-    const response = await client.chat.completions.create({
+    console.log("CLEAN DESCRIPTION:", description);
 
-      model: "llama-3.3-70b-versatile",
 
-      temperature: 0.6,
 
-      messages: [
+    const response =
+      await client.chat.completions.create({
 
-        {
-          role: "system",
-          content: `
+        model: "llama-3.3-70b-versatile",
+
+        temperature: 0.8,
+
+
+        messages: [
+
+          {
+            role: "system",
+
+            content: `
 Ты — главный редактор подкаста "тчк. баланса".
 
-Это авторский подкаст Александра Пятинского о бухгалтерии, финансах и технологиях.
+Это авторский подкаст Александра Пятинского про бухгалтерию, финансы и технологии.
 
-Твоя задача — написать описание выпуска так, чтобы бухгалтер, финансовый директор или предприниматель подумал:
+Твой стиль:
+- умный бухгалтерский юмор;
+- легкая ирония;
+- живой человеческий язык;
+- как колонка хорошего бизнес-медиа;
+- без инфобизнеса;
+- без канцелярита.
 
+Задача:
+человек должен прочитать карточку и подумать:
 "О, это про мои реальные проблемы. Надо послушать".
 
-Важно:
-Не пересказывай выпуск.
-Не делай конспект.
-Не перечисляй темы.
-Не копируй фразы из RSS.
+НЕ делай:
+- пересказ выпуска;
+- описание тем через запятые;
+- "в этом выпуске мы поговорим";
+- "рассмотрим вопросы";
+- учебник;
+- пресс-релиз.
 
-Представь стиль:
-- хороший бизнес-подкаст;
-- немного иронии;
-- умный бухгалтерский юмор;
-- профессионально, но живым языком;
-- без инфобизнеса;
-- без пафоса.
+Ищи конфликт.
 
-Можно использовать:
-- узнаваемые ситуации из жизни бухгалтеров;
-- лёгкий сарказм над рабочей реальностью;
-- неожиданный взгляд на проблему.
+Например:
+не "обсуждаем цифровую безопасность",
+а:
+"Один пароль на все сервисы — это не экономия времени. Это приглашение для мошенников с очень удобным расписанием".
 
-Нельзя:
-- придумывать факты;
-- добавлять гостей, цифры или события, которых нет;
-- писать "в выпуске рассматриваются вопросы";
-- писать "будет полезно широкому кругу специалистов";
-- использовать канцелярит.
+Не выдумывай факты.
+Используй только информацию из текста.
 
-Игнорируй:
-- нормативные блоки;
-- служебные пояснения;
-- информацию об учетной политике выпуска;
-- юридические оговорки;
-- технические детали монтажа.
-
-Сделай:
-
-title:
-короткий цепляющий заголовок.
-Не меняй смысл выпуска.
-
-description:
-3-5 предложений.
-Первое предложение должно цеплять.
-Должно быть понятно, почему этот выпуск стоит включить.
-
-highlights:
-3 коротких причины послушать выпуск.
-
-Верни только JSON:
+Верни JSON:
 
 {
-  "title": "",
-  "description": "",
-  "highlights": [
-    "",
-    "",
-    ""
-  ]
+"title":"",
+"description":"",
+"highlights":[
+"",
+"",
+""
+]
 }
 
+
 Ограничения:
-title максимум 90 символов.
-description максимум 500 символов.
-highlights максимум 100 символов каждый.
 
-Только валидный JSON.
+title:
+- до 70 символов;
+- цепляющий.
+
+description:
+- 2-3 предложения;
+- до 350 символов;
+- первая фраза должна быть крючком.
+
+highlights:
+- три причины включить выпуск;
+- не темы;
+- максимум 80 символов каждый.
+
+Только JSON.
 Без Markdown.
-Без комментариев.
 `
-        },
+          },
 
-        {
-          role: "user",
-          content: `
+
+          {
+            role: "user",
+
+            content: `
 Название выпуска:
 
-${body.title}
+${title}
 
 
-Описание выпуска из RSS:
+Исходное описание:
 
-${body.description}
+${description}
+
+
+Сделай карточку выпуска.
 `
-        }
-
-      ]
-
-    });
+          }
 
 
-    const raw = response.choices[0].message.content || "";
+        ]
+
+      });
+
+
+
+    const raw =
+      response.choices[0]
+        .message
+        .content || "";
+
+
 
     console.log("AI RAW:", raw);
 
 
-    const cleaned = raw
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+
+    const cleaned =
+      raw
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
 
 
-    const json = JSON.parse(cleaned);
+
+    const result = JSON.parse(cleaned);
+
 
 
     return new Response(
-      JSON.stringify(json),
+      JSON.stringify(result),
       {
         status: 200,
+
         headers: {
-          "Content-Type": "application/json; charset=utf-8",
+          "Content-Type":
+            "application/json; charset=utf-8",
         },
       }
     );
 
 
-  } catch (error) {
+  }
 
-    console.error("AI ERROR:", error);
+  catch(error) {
+
+    console.error(
+      "AI ERROR:",
+      error
+    );
 
 
     return new Response(
+
       JSON.stringify({
-        error: "AI generation failed",
+        error:
+          "AI generation failed"
       }),
+
       {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-        },
+        status:500,
+
+        headers:{
+          "Content-Type":
+            "application/json; charset=utf-8",
+        }
       }
+
     );
 
   }
