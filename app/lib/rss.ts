@@ -1,9 +1,11 @@
+import Parser from "rss-parser";
+
 const RSS_URL = "https://podster.fm/rss.xml?pid=91601";
 
+const parser = new Parser();
+
 export async function getPodcastEpisodes() {
-  const response = await fetch(RSS_URL);
+  const feed = await parser.parseURL(RSS_URL);
 
-  const xml = await response.text();
-
-  return xml;
+  return feed.items;
 }
