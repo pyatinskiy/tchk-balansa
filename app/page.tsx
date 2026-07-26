@@ -45,44 +45,67 @@ export default function Home() {
   Мы разбираемся, почему.
 </p>
 </section>
-<section className="mt-32 max-w-3xl">
-  <div className="space-y-20 text-left">
+<section className="mt-32 max-w-3xl w-full">
+  <div className="divide-y divide-zinc-200">
 
-    <div>
-      <p className="text-sm text-zinc-400">01</p>
-      <h3 className="mt-4 text-3xl font-semibold">
-        Подкаст
-      </h3>
-      <p className="mt-4 text-lg text-zinc-500">
-        Разговоры о бухгалтерии,
-        <br />
-        финансах и технологиях.
-      </p>
-    </div>
+    <a
+      href="#"
+      className="group flex items-center justify-between py-8"
+    >
+      <div>
+        <p className="text-sm text-zinc-400">01</p>
+        <h3 className="mt-2 text-3xl font-semibold">
+          Подкаст
+        </h3>
+        <p className="mt-3 text-lg text-zinc-500">
+          Выпуски, разговоры и разборы.
+        </p>
+      </div>
 
-    <div>
-      <p className="text-sm text-zinc-400">02</p>
-      <h3 className="mt-4 text-3xl font-semibold">
-        Курсы
-      </h3>
-      <p className="mt-4 text-lg text-zinc-500">
-        Практические знания
-        <br />
-        для работы с цифрами.
-      </p>
-    </div>
+      <span className="text-2xl text-zinc-400 group-hover:text-black">
+        →
+      </span>
+    </a>
 
-    <div>
-      <p className="text-sm text-zinc-400">03</p>
-      <h3 className="mt-4 text-3xl font-semibold">
-        Блог
-      </h3>
-      <p className="mt-4 text-lg text-zinc-500">
-        Наблюдения, разборы
-        <br />
-        и эксперименты.
-      </p>
-    </div>
+
+    <a
+      href="#"
+      className="group flex items-center justify-between py-8"
+    >
+      <div>
+        <p className="text-sm text-zinc-400">02</p>
+        <h3 className="mt-2 text-3xl font-semibold">
+          Курсы
+        </h3>
+        <p className="mt-3 text-lg text-zinc-500">
+          Практические программы обучения.
+        </p>
+      </div>
+
+      <span className="text-2xl text-zinc-400 group-hover:text-black">
+        →
+      </span>
+    </a>
+
+
+    <a
+      href="#"
+      className="group flex items-center justify-between py-8"
+    >
+      <div>
+        <p className="text-sm text-zinc-400">03</p>
+        <h3 className="mt-2 text-3xl font-semibold">
+          Блог
+        </h3>
+        <p className="mt-3 text-lg text-zinc-500">
+          Материалы, наблюдения и эксперименты.
+        </p>
+      </div>
+
+      <span className="text-2xl text-zinc-400 group-hover:text-black">
+        →
+      </span>
+    </a>
 
   </div>
 </section>
