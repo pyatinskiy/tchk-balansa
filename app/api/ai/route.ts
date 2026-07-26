@@ -1,58 +1,82 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(
+  process.env.GEMINI_API_KEY!
+);
 
 export async function POST(request: Request) {
+
   try {
+
     const body = await request.json();
 
-    console.log("BODY:", body);
-    console.log(
-      "KEY EXISTS:",
-      !!process.env.OPENAI_API_KEY
-    );
+    const title = body.title;
+    const description = body.description;
 
-    const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
-      messages: [
-        {
-          role: "system",
-          content: "Ты профессиональный редактор подкастов.",
-        },
-        {
-          role: "user",
-          content: `
-Напиши описание выпуска подкаста.
+
+    const prompt = `
+Ты редактор подкаста "тчк. баланса".
+
+Подготовь карточку выпуска.
 
 Название:
-${body.title}
+${title}
 
 Описание:
-${body.description}
-          `,
-        },
-      ],
+${description}
+
+Ответ строго в формате:
+
+Заголовок:
+...
+
+О чем выпуск:
+...
+
+Главные мысли:
+• ...
+• ...
+• ...
+
+Кому будет полезно:
+...
+
+Стиль:
+современное технологичное медиа.
+Умно, живо, без канцелярита.
+`;
+
+
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-1.5-flash",
     });
+
+
+    const result = await model.generateContent(prompt);
+
+
+    const text = result.response.text();
+
 
     return Response.json({
-      text: response.choices[0].message.content,
+      text,
     });
 
-  } catch (error: any) {
 
-    console.error("OPENAI ERROR:");
+  } catch(error:any) {
+
     console.error(error);
 
     return Response.json(
       {
-        error: error.message,
-        details: error,
+        error: error.message
       },
       {
-        status: 500,
+        status:500
       }
     );
+
   }
+
 }
