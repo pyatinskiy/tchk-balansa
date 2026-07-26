@@ -24,12 +24,7 @@ export default function Home() {
 
 
     <div className="mt-24">
-
-      <h2 className="text-3xl font-semibold">
-        тчк<span className="text-orange-500">.</span> баланса
-      </h2>
-
-
+      
       <nav className="mt-16 flex flex-col gap-10">
 
         <a href="#" className="group">
