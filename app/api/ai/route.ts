@@ -7,41 +7,14 @@ const client = new Groq({
 
 function cleanHtml(text: string = "") {
   return text
-    .replace(/<script[^>]*>.*?<\/script>/gs, "")
-    .replace(/<style[^>]*>.*?<\/style>/gs, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&quot;/g, '"')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-
-function removeNoise(text: string) {
-
-  const garbage = [
-    "Основные подходы к подготовке выпуска",
-    "Основные элементы учетной политики выпуска",
-    "Нормативные ссылки из выпуска",
-    "Список используемых сокращений",
-    "События после отчетной даты",
-    "Непрерывность деятельности",
-    "Исправление ошибок в подкасте",
-    "Прочие условия",
-    "Технические вопросы"
-  ];
-
-  let result = text;
-
-  for (const item of garbage) {
-    const index = result.indexOf(item);
-
-    if (index !== -1) {
-      result = result.slice(0, index);
-    }
-  }
-
-  return result.trim();
 }
 
 
@@ -55,67 +28,72 @@ export async function POST(request: Request) {
 
     const title = body.title || "";
 
-    const description = removeNoise(
-      cleanHtml(body.description)
-    );
+    const description = cleanHtml(body.description || "");
 
 
-    console.log("CLEAN DESCRIPTION:", description);
+    console.log("TITLE:", title);
+    console.log("DESCRIPTION:", description.slice(0,500));
 
 
 
-    const response =
-      await client.chat.completions.create({
+    const response = await client.chat.completions.create({
 
-        model: "llama-3.3-70b-versatile",
+      model: "llama-3.3-70b-versatile",
 
-        temperature: 0.8,
+      temperature: 0.7,
 
 
-        messages: [
+      messages: [
 
-          {
-            role: "system",
+        {
+          role: "system",
 
-            content: `
-Ты — главный редактор подкаста "тчк. баланса".
+          content: `
+Ты — редактор подкаста "тчк. баланса".
 
-Это авторский подкаст Александра Пятинского про бухгалтерию, финансы и технологии.
+Ты пишешь НЕ описание выпуска.
+Ты пишешь короткий анонс, после которого хочется нажать "слушать".
 
-Твой стиль:
-- умный бухгалтерский юмор;
-- легкая ирония;
+Стиль:
+- умное бизнес-медиа;
 - живой человеческий язык;
-- как колонка хорошего бизнес-медиа;
-- без инфобизнеса;
-- без канцелярита.
+- тонкий бухгалтерский юмор;
+- легкая ирония;
+- без пафоса;
+- без маркетинговых штампов.
 
-Задача:
-человек должен прочитать карточку и подумать:
-"О, это про мои реальные проблемы. Надо послушать".
+Запрещено:
 
-НЕ делай:
-- пересказ выпуска;
-- описание тем через запятые;
-- "в этом выпуске мы поговорим";
-- "рассмотрим вопросы";
-- учебник;
-- пресс-релиз.
+❌ "В этом выпуске мы поговорим..."
+❌ "Разберем тему..."
+❌ "Будет полезно бухгалтерам..."
+❌ пересказывать содержание
+❌ перечислять темы
+❌ копировать исходное описание
+❌ писать учебник
 
-Ищи конфликт.
+Нужно:
 
-Например:
-не "обсуждаем цифровую безопасность",
-а:
-"Один пароль на все сервисы — это не экономия времени. Это приглашение для мошенников с очень удобным расписанием".
+Начать с боли, странного вопроса или знакомой ситуации.
 
-Не выдумывай факты.
-Используй только информацию из текста.
+Пример интонации:
 
-Верни JSON:
+"Главбуху не нужен хакер в капюшоне. Иногда достаточно одного звонка и слишком доверчивого клика."
+
+или
+
+"Самая дорогая ошибка в бухгалтерии иногда начинается не с проводки. А с письма "срочно оплатить".
+
+Покажи конфликт:
+человек vs мошенник,
+бухгалтер vs новые технологии,
+бизнес vs хаос.
+
+Используй только факты из исходного текста.
+
+Верни строго JSON:
 
 {
-"title":"",
 "description":"",
 "highlights":[
 "",
@@ -127,30 +105,23 @@ export async function POST(request: Request) {
 
 Ограничения:
 
-title:
-- до 70 символов;
-- цепляющий.
-
 description:
-- 2-3 предложения;
-- до 350 символов;
-- первая фраза должна быть крючком.
+- максимум 350 символов
 
 highlights:
-- три причины включить выпуск;
-- не темы;
-- максимум 80 символов каждый.
+- максимум 80 символов каждый
 
 Только JSON.
 Без Markdown.
 `
-          },
+        },
 
 
-          {
-            role: "user",
+        {
+          role: "user",
 
-            content: `
+          content: `
+
 Название выпуска:
 
 ${title}
@@ -160,22 +131,17 @@ ${title}
 
 ${description}
 
-
-Сделай карточку выпуска.
 `
-          }
+        }
 
+      ]
 
-        ]
-
-      });
+    });
 
 
 
     const raw =
-      response.choices[0]
-        .message
-        .content || "";
+      response.choices[0].message.content || "";
 
 
 
@@ -183,54 +149,57 @@ ${description}
 
 
 
-    const cleaned =
-      raw
-        .replace(/```json/g, "")
-        .replace(/```/g, "")
-        .trim();
+    const cleaned = raw
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
 
 
 
-    const result = JSON.parse(cleaned);
+    const ai = JSON.parse(cleaned);
 
-
-
-    return new Response(
-      JSON.stringify(result),
-      {
-        status: 200,
-
-        headers: {
-          "Content-Type":
-            "application/json; charset=utf-8",
-        },
-      }
-    );
-
-
-  }
-
-  catch(error) {
-
-    console.error(
-      "AI ERROR:",
-      error
-    );
 
 
     return new Response(
 
       JSON.stringify({
-        error:
-          "AI generation failed"
+
+        title: title,
+
+        description: ai.description,
+
+        highlights: ai.highlights
+
+      }),
+
+      {
+        status:200,
+
+        headers:{
+          "Content-Type":
+          "application/json; charset=utf-8"
+        }
+      }
+
+    );
+
+
+  } catch(error){
+
+    console.error("AI ERROR:", error);
+
+
+    return new Response(
+
+      JSON.stringify({
+        error:"AI generation failed"
       }),
 
       {
         status:500,
-
         headers:{
           "Content-Type":
-            "application/json; charset=utf-8",
+          "application/json; charset=utf-8"
         }
       }
 
