@@ -35,9 +35,21 @@ export default async function Podcast() {
 
                 <div>
                   <p className="text-sm text-zinc-400">
-                    {episode.pubDate}
+                    {formatDate(episode.pubDate)}
                   </p>
-
+{episode.itunes?.image && (
+  <img
+    src={episode.itunes.image}
+    alt={episode.title}
+    className="
+      w-32
+      h-32
+      rounded-2xl
+      object-cover
+      mb-5
+    "
+  />
+)}
                   <h2 className="mt-3 text-3xl font-semibold">
                     {episode.title}
                   </h2>
@@ -45,8 +57,11 @@ export default async function Podcast() {
 
 
                 <p className="text-zinc-600 leading-7">
-                  {episode.contentSnippet?.slice(0, 250)}...
-                </p>
+  {episode.itunes?.summary
+    ?.replace(/<[^>]*>/g, "")
+    ?.slice(0, 220)}
+  ...
+</p>
 
 
                 <div className="flex items-center gap-4">
