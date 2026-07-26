@@ -56,24 +56,25 @@ ${body.title}
 ${body.description}
 
 
-Верни строго в формате:
+Верни только JSON.
 
-TITLE:
-короткое название выпуска
+Формат:
 
+{
+  "title": "",
+  "intro": "",
+  "keyPoints": [
+    "",
+    "",
+    ""
+  ],
+  "audience": ""
+}
 
-INTRO:
-2-3 предложения о чём выпуск
-
-
-KEY_POINTS:
-- мысль 1
-- мысль 2
-- мысль 3
-
-
-AUDIENCE:
-кому будет полезен выпуск
+Правила:
+- никаких комментариев;
+- никаких Markdown;
+- только валидный JSON.
 
 
 Не используй Markdown.
@@ -87,9 +88,14 @@ AUDIENCE:
 
 
   return new Response(
-    JSON.stringify({
-      text: response.choices[0].message.content,
-    }),
+  response.choices[0].message.content,
+  {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+  }
+);
     {
       status: 200,
       headers: {
