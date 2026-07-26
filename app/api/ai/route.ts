@@ -7,58 +7,61 @@ const client = new Groq({
 
 export async function POST(request: Request) {
 
-  const body = await request.json();
+  try {
 
-  console.log("BODY:", body);
+    const body = await request.json();
+
+    console.log("BODY:", body);
 
 
-  const response = await client.chat.completions.create({
+    const response = await client.chat.completions.create({
 
-    model: "llama-3.3-70b-versatile",
+      model: "llama-3.3-70b-versatile",
 
-    messages: [
+      temperature: 0.3,
 
-      {
-        role: "system",
-        content: `
+      messages: [
+
+        {
+          role: "system",
+          content: `
 Ты — главный редактор подкаста "тчк. баланса".
 
 Это медиа о бухгалтерии, финансах и технологиях.
 
-Твой стиль:
-- как современное технологичное медиа;
-- коротко и понятно;
-- без бюрократического языка;
-- без скучных учебников;
-- с уважением к профессионалам.
+Стиль:
+- современное технологичное медиа;
+- коротко;
+- понятно;
+- умно, но без канцелярита.
 
 Важно:
-- НЕ придумывай факты;
-- НЕ добавляй информацию, которой нет в описании;
-- если данных мало — пиши обобщенно;
-- избегай громких обещаний.
+- не придумывай факты;
+- используй только информацию из описания выпуска;
+- если информации мало — пиши осторожно;
+- не добавляй вымышленные цифры и выводы.
 
-Пиши так, чтобы карточку хотелось открыть и послушать выпуск.
-        `,
-      },
+Твоя задача — подготовить редакторскую карточку выпуска.
+          `,
+        },
 
 
-      {
-        role: "user",
-        content: `
-Подготовь карточку выпуска подкаста.
-
+        {
+          role: "user",
+          content: `
 Название выпуска:
+
 ${body.title}
 
 
 Описание из RSS:
+
 ${body.description}
 
 
 Верни только JSON.
 
-Формат:
+Структура:
 
 {
   "title": "",
@@ -71,37 +74,65 @@ ${body.description}
   "audience": ""
 }
 
-Правила:
-- никаких комментариев;
-- никаких Markdown;
-- только валидный JSON.
+Не добавляй:
+- Markdown
+- пояснения
+- слова "Вот JSON"
+- обратные кавычки
+
+Только объект JSON.
+          `,
+        },
+
+      ],
+
+    });
 
 
-Не используй Markdown.
-Не добавляй вступлений вроде "Вот карточка".
-`,
-      },
-
-    ],
-
-  });
+    const raw = response.choices[0].message.content || "";
 
 
-  return new Response(
-  response.choices[0].message.content,
-  {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
+    console.log("AI RAW:", raw);
+
+
+    // убираем возможные ```json ... ```
+    const cleaned = raw
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+
+    const json = JSON.parse(cleaned);
+
+
+    return new Response(
+      JSON.stringify(json),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      }
+    );
+
+
+  } catch (error) {
+
+    console.error("AI ERROR:", error);
+
+
+    return new Response(
+      JSON.stringify({
+        error: "AI generation failed",
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        },
+      }
+    );
+
   }
-);
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-      },
-    }
-  );
 
 }
