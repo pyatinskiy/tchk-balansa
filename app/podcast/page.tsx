@@ -17,7 +17,16 @@ export default async function Podcast() {
           Бухгалтерия. Финансы. Технологии.
         </p>
 
-        <PodcastCards episodes={episodes.slice(0, 6)} />
+       <PodcastCards
+  episodes={episodes.slice(0, 6).map((episode) => ({
+    title: episode.title,
+    link: episode.link,
+    pubDate: episode.pubDate,
+    summary: episode.itunes?.summary || "",
+    audio: episode.enclosure?.url || "",
+    image: episode.itunes?.image || "",
+  }))}
+/>
 
       </div>
 
