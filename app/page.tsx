@@ -36,7 +36,7 @@ export default function Home() {
   </h2>
 
   <p className="mt-8 text-xl leading-8 text-zinc-600">
-    Решения. Технологии. Люди.
+    Решения. Люди. Будущее.
   </p>
 
   <p className="mt-6 text-lg leading-8 text-zinc-500">
