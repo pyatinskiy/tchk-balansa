@@ -45,6 +45,47 @@ export default function Home() {
   Мы разбираемся, почему.
 </p>
 </section>
+<section className="mt-32 max-w-3xl">
+  <div className="space-y-20 text-left">
+
+    <div>
+      <p className="text-sm text-zinc-400">01</p>
+      <h3 className="mt-4 text-3xl font-semibold">
+        Подкаст
+      </h3>
+      <p className="mt-4 text-lg text-zinc-500">
+        Разговоры о бухгалтерии,
+        <br />
+        финансах и технологиях.
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-400">02</p>
+      <h3 className="mt-4 text-3xl font-semibold">
+        Курсы
+      </h3>
+      <p className="mt-4 text-lg text-zinc-500">
+        Практические знания
+        <br />
+        для работы с цифрами.
+      </p>
+    </div>
+
+    <div>
+      <p className="text-sm text-zinc-400">03</p>
+      <h3 className="mt-4 text-3xl font-semibold">
+        Блог
+      </h3>
+      <p className="mt-4 text-lg text-zinc-500">
+        Наблюдения, разборы
+        <br />
+        и эксперименты.
+      </p>
+    </div>
+
+  </div>
+</section>
       </div>
     </main>
   );
