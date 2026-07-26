@@ -45,6 +45,22 @@ export default function Home() {
   Мы разбираемся, почему.
 </p>
 <section className="mt-32 max-w-2xl text-center">
+  <h2 className="text-4xl font-semibold tracking-tight">
+    За каждой цифрой есть история.
+  </h2>
+
+  <p className="mt-8 text-xl leading-8 text-zinc-600">
+    Решения. Люди. Будущее.
+  </p>
+
+  <p className="mt-6 text-lg leading-8 text-zinc-500">
+    Финансы меняются.
+    <br />
+    Мы разбираемся, почему.
+  </p>
+</section>
+
+<section className="mt-32 max-w-2xl text-center">
   <p className="text-xl leading-8 text-zinc-500">
     тчк. баланса — это место,
     <br />
