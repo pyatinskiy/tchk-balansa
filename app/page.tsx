@@ -44,70 +44,12 @@ export default function Home() {
   <br />
   Мы разбираемся, почему.
 </p>
-</section>
-<section className="mt-32 max-w-3xl w-full">
-  <div className="divide-y divide-zinc-200">
-
-    <a
-      href="#"
-      className="group flex items-center justify-between py-8"
-    >
-      <div>
-        <p className="text-sm text-zinc-400">01</p>
-        <h3 className="mt-2 text-3xl font-semibold">
-          Подкаст
-        </h3>
-        <p className="mt-3 text-lg text-zinc-500">
-          Выпуски, разговоры и разборы.
-        </p>
-      </div>
-
-      <span className="text-2xl text-zinc-400 group-hover:text-black">
-        →
-      </span>
-    </a>
-
-
-    <a
-      href="#"
-      className="group flex items-center justify-between py-8"
-    >
-      <div>
-        <p className="text-sm text-zinc-400">02</p>
-        <h3 className="mt-2 text-3xl font-semibold">
-          Курсы
-        </h3>
-        <p className="mt-3 text-lg text-zinc-500">
-          Практические программы обучения.
-        </p>
-      </div>
-
-      <span className="text-2xl text-zinc-400 group-hover:text-black">
-        →
-      </span>
-    </a>
-
-
-    <a
-      href="#"
-      className="group flex items-center justify-between py-8"
-    >
-      <div>
-        <p className="text-sm text-zinc-400">03</p>
-        <h3 className="mt-2 text-3xl font-semibold">
-          Блог
-        </h3>
-        <p className="mt-3 text-lg text-zinc-500">
-          Материалы, наблюдения и эксперименты.
-        </p>
-      </div>
-
-      <span className="text-2xl text-zinc-400 group-hover:text-black">
-        →
-      </span>
-    </a>
-
-  </div>
+<section className="mt-32 max-w-2xl text-center">
+  <p className="text-xl leading-8 text-zinc-500">
+    тчк. баланса — это место,
+    <br />
+    где идеи превращаются в решения.
+  </p>
 </section>
       </div>
     </main>
