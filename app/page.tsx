@@ -40,10 +40,10 @@ export default function Home() {
   </p>
 
   <p className="mt-6 text-lg leading-8 text-zinc-500">
-    Мы разбираем мир финансов
-    <br />
-    без лишнего шума и сложных слов.
-  </p>
+  Финансы меняются.
+  <br />
+  Мы разбираемся, почему.
+</p>
 </section>
       </div>
     </main>
