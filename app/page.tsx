@@ -30,6 +30,22 @@ export default function Home() {
             Курсы
           </a>
         </div>
+                <section className="mt-32 max-w-2xl text-center">
+          <h2 className="text-4xl font-semibold tracking-tight">
+            тчк<span className="text-orange-500">.</span> баланса —
+          </h2>
+
+          <p className="mt-8 text-xl leading-8 text-zinc-600">
+            место, где бухгалтерия, финансы и технологии
+            встречаются с реальной практикой.
+          </p>
+
+          <p className="mt-6 text-lg leading-8 text-zinc-500">
+            Без скучной теории.
+            <br />
+            С примерами из бизнеса.
+          </p>
+        </section>
       </div>
     </main>
   );
