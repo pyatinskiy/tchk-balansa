@@ -56,8 +56,16 @@ ${body.description}
   });
 
 
-  return Response.json({
+ return new Response(
+  JSON.stringify({
     text: response.choices[0].message.content,
-  });
+  }),
+  {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+  }
+);
 
 }
