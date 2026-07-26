@@ -24,10 +24,12 @@ export default function Home() {
 
 
     <div className="mt-24">
+
       
+
       <nav className="mt-16 flex flex-col gap-10">
 
-        <a href="#" className="group">
+        <a href="/podcast" className="group">
           <span className="text-sm text-zinc-400">
             01
           </span>
@@ -37,7 +39,7 @@ export default function Home() {
         </a>
 
 
-       <a href="/podcast" className="group">
+        <a href="/courses" className="group">
           <span className="text-sm text-zinc-400">
             02
           </span>
@@ -47,7 +49,7 @@ export default function Home() {
         </a>
 
 
-<a href="/courses" className="group">
+        <a href="/blog" className="group">
           <span className="text-sm text-zinc-400">
             03
           </span>
@@ -57,7 +59,7 @@ export default function Home() {
         </a>
 
 
-<a href="/blog" className="group">
+        <a href="/about" className="group">
           <span className="text-sm text-zinc-400">
             04
           </span>
@@ -65,7 +67,7 @@ export default function Home() {
             О проекте
           </div>
         </a>
-<a href="/about" className="group"></a>
+
       </nav>
 
     </div>
