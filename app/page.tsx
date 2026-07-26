@@ -31,21 +31,20 @@ export default function Home() {
           </a>
         </div>
                 <section className="mt-32 max-w-2xl text-center">
-          <h2 className="text-4xl font-semibold tracking-tight">
-            тчк<span className="text-orange-500">.</span> баланса —
-          </h2>
+  <h2 className="text-4xl font-semibold tracking-tight">
+    За каждой цифрой есть история.
+  </h2>
 
-          <p className="mt-8 text-xl leading-8 text-zinc-600">
-            место, где бухгалтерия, финансы и технологии
-            встречаются с реальной практикой.
-          </p>
+  <p className="mt-8 text-xl leading-8 text-zinc-600">
+    Решения. Технологии. Люди.
+  </p>
 
-          <p className="mt-6 text-lg leading-8 text-zinc-500">
-            Без скучной теории.
-            <br />
-            С примерами из бизнеса.
-          </p>
-        </section>
+  <p className="mt-6 text-lg leading-8 text-zinc-500">
+    Мы разбираем мир финансов
+    <br />
+    без лишнего шума и сложных слов.
+  </p>
+</section>
       </div>
     </main>
   );
