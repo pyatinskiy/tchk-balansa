@@ -37,7 +37,7 @@ export default function Home() {
         </a>
 
 
-        <a href="#" className="group">
+       <a href="/podcast" className="group">
           <span className="text-sm text-zinc-400">
             02
           </span>
@@ -47,7 +47,7 @@ export default function Home() {
         </a>
 
 
-        <a href="#" className="group">
+<a href="/courses" className="group">
           <span className="text-sm text-zinc-400">
             03
           </span>
@@ -57,7 +57,7 @@ export default function Home() {
         </a>
 
 
-        <a href="#" className="group">
+<a href="/blog" className="group">
           <span className="text-sm text-zinc-400">
             04
           </span>
@@ -65,7 +65,7 @@ export default function Home() {
             О проекте
           </div>
         </a>
-
+<a href="/about" className="group"></a>
       </nav>
 
     </div>
