@@ -7,7 +7,7 @@ export default function Home() {
         </h1>
 
         <p className="mt-8 text-2xl text-zinc-600">
-          Бухгалтерия. Финансы. Технологии.
+          Бухгалтерия. Финансы. Технологии. 🟧
         </p>
 
         <p className="mt-6 text-lg text-zinc-500">
