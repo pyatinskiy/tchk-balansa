@@ -1,6 +1,12 @@
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white text-black flex flex-col items-center justify-center px-6">
+    <main className="relative min-h-screen bg-white text-black flex flex-col items-center justify-center px-6">
+
+  <button
+    className="absolute top-8 left-8 text-2xl hover:opacity-60 transition"
+  >
+    ☰
+  </button>
       <div className="max-w-3xl text-center">
 
         <h1 className="text-7xl font-bold tracking-tight">
