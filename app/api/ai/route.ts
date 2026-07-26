@@ -7,8 +7,19 @@ const client = new OpenAI({
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const title = body.title;
-  const description = body.description;
+  const title = body.title || "";
+  const description = body.description || "";
+
+  if (!title && !description) {
+    return Response.json(
+      {
+        error: "Нет данных для анализа",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
 
   const prompt = `
 Ты редактор подкаста "тчк. баланса".
@@ -21,21 +32,18 @@ ${title}
 Описание из RSS:
 ${description}
 
-Сделай ответ в формате:
+Верни только JSON без markdown:
 
-Короткий заголовок:
-...
-
-О чем выпуск:
-...
-
-3 главные мысли:
-• ...
-• ...
-• ...
-
-Кому будет полезно:
-...
+{
+"title": "короткий красивый заголовок",
+"description": "описание выпуска в 2-3 предложениях",
+"keyPoints": [
+"мысль 1",
+"мысль 2",
+"мысль 3"
+],
+"audience": "кому будет полезно"
+}
 
 Стиль:
 современно, умно, но без канцелярита.
@@ -57,7 +65,9 @@ ${description}
   });
 
 
-  return Response.json({
-    text: response.choices[0].message.content,
-  });
+  const content = response.choices[0].message.content;
+
+return Response.json(
+  JSON.parse(content || "{}")
+);
 }
