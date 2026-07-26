@@ -22,23 +22,56 @@ export default function Home() {
       ✕
     </button>
 
-    <div className="mt-24 flex flex-col gap-8 text-4xl font-semibold">
 
-      <a href="#">
-        01 Подкаст
-      </a>
+    <div className="mt-24">
 
-      <a href="#">
-        02 Курсы
-      </a>
+      <h2 className="text-3xl font-semibold">
+        тчк<span className="text-orange-500">.</span> баланса
+      </h2>
 
-      <a href="#">
-        03 Блог
-      </a>
 
-      <a href="#">
-        04 О проекте
-      </a>
+      <nav className="mt-16 flex flex-col gap-10">
+
+        <a href="#" className="group">
+          <span className="text-sm text-zinc-400">
+            01
+          </span>
+          <div className="text-5xl font-semibold group-hover:text-orange-500 transition">
+            Подкаст
+          </div>
+        </a>
+
+
+        <a href="#" className="group">
+          <span className="text-sm text-zinc-400">
+            02
+          </span>
+          <div className="text-5xl font-semibold group-hover:text-orange-500 transition">
+            Курсы
+          </div>
+        </a>
+
+
+        <a href="#" className="group">
+          <span className="text-sm text-zinc-400">
+            03
+          </span>
+          <div className="text-5xl font-semibold group-hover:text-orange-500 transition">
+            Блог
+          </div>
+        </a>
+
+
+        <a href="#" className="group">
+          <span className="text-sm text-zinc-400">
+            04
+          </span>
+          <div className="text-5xl font-semibold group-hover:text-orange-500 transition">
+            О проекте
+          </div>
+        </a>
+
+      </nav>
 
     </div>
 
