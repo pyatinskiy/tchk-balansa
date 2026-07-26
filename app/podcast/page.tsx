@@ -9,32 +9,34 @@ export default async function Podcast() {
       <div className="max-w-5xl mx-auto">
 
         <h1 className="text-6xl font-bold tracking-tight">
-          тчк<span className="text-orange-500">.</span> баланса
+          Подкаст
         </h1>
 
-        <p className="mt-6 text-2xl text-zinc-600">
-          Подкаст о бухгалтерии, финансах и технологиях.
+        <p className="mt-6 text-xl text-zinc-600">
+          Бухгалтерия. Финансы. Технологии.
         </p>
 
+        <div className="mt-16 grid gap-8">
 
-        <section className="mt-20 grid gap-8">
-
-          {episodes.slice(0, 10).map((episode: any) => (
+          {episodes.slice(0, 6).map((episode: any) => (
 
             <article
               key={episode.guid}
-              className="border border-zinc-200 rounded-3xl p-8 hover:shadow-lg transition"
+              className="
+                border border-zinc-200 
+                rounded-3xl 
+                p-8
+                hover:border-orange-400
+                transition
+              "
             >
 
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-5">
 
                 <div>
                   <p className="text-sm text-zinc-400">
-                    {new Date(
-                      episode.pubDate
-                    ).toLocaleDateString("ru-RU")}
+                    {episode.pubDate}
                   </p>
-
 
                   <h2 className="mt-3 text-3xl font-semibold">
                     {episode.title}
@@ -42,22 +44,38 @@ export default async function Podcast() {
                 </div>
 
 
-                <p className="text-zinc-600 leading-7 line-clamp-4">
-                  {episode.contentSnippet}
+                <p className="text-zinc-600 leading-7">
+                  {episode.contentSnippet?.slice(0, 250)}...
                 </p>
 
 
-                <div className="flex gap-4">
+                <div className="flex items-center gap-4">
 
-                  <a
-                    href={episode.link}
-                    target="_blank"
-                    className="rounded-full bg-black px-6 py-3 text-white hover:bg-zinc-800 transition"
+                  <audio
+                    controls
+                    className="w-full"
                   >
-                    ▶ Слушать выпуск
-                  </a>
+                    <source
+                      src={episode.enclosure.url}
+                      type="audio/mpeg"
+                    />
+                  </audio>
 
                 </div>
+
+
+                <a
+                  href={episode.link}
+                  target="_blank"
+                  className="
+                    text-sm
+                    text-orange-500
+                    hover:underline
+                  "
+                >
+                  Открыть выпуск на Podster →
+                </a>
+
 
               </div>
 
@@ -65,7 +83,7 @@ export default async function Podcast() {
 
           ))}
 
-        </section>
+        </div>
 
       </div>
 
