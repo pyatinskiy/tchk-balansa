@@ -1,58 +1,116 @@
 import Parser from "rss-parser";
 
-
-const parser = new Parser({
-
-  customFields: {
-    item: [
-      ["itunes:image", "itunesImage"],
-      ["itunes:summary", "itunesSummary"],
-      ["enclosure", "enclosure"],
-    ],
-  },
-
-});
+const parser = new Parser();
 
 
-export async function getPodcastEpisodes() {
+const RSS_URL =
+  "https://podster.fm/rss.xml?pid=91601";
 
 
-  const feedUrl = "https://podster.fm/rss.xml?pid=91601";
+export type Episode = {
+
+  title: string;
+
+  link: string;
+
+  pubDate: string;
+
+  audio: string;
+
+  image: string;
+
+  summary: string;
+
+  aiDescription?: string;
+
+  highlights?: string[];
+
+};
 
 
-  const feed = await parser.parseURL(feedUrl);
+
+function cleanHtml(text: string = "") {
+
+  return text
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
 
 
-  return feed.items.map((item) => ({
+
+export async function getPodcastEpisodes()
+: Promise<Episode[]> {
 
 
-    title: item.title || "",
+  const feed =
+    await parser.parseURL(RSS_URL);
 
 
-    link: item.link || "",
+
+  const episodes =
+    feed.items.map((item) => {
 
 
-    pubDate: item.pubDate || "",
+      return {
 
 
-    summary:
-      item.itunesSummary ||
-      item.contentSnippet ||
-      item.content ||
-      "",
+        // ===== RSS ДАННЫЕ =====
+
+        title:
+          item.title || "Без названия",
 
 
-    audio:
-      item.enclosure?.url ||
-      "",
+        link:
+          item.link || "",
 
 
-    image:
-      item.itunesImage?.href ||
-      item.itunesImage ||
-      "",
+        pubDate:
+          item.pubDate || "",
 
 
-  }));
+        audio:
+          item.enclosure?.url || "",
+
+
+        image:
+          item.itunes?.image || "",
+
+
+
+        // оставляем только на случай отладки
+
+        summary:
+          cleanHtml(
+            item.itunes?.summary ||
+            item.content ||
+            ""
+          ),
+
+
+        // AI пока отключаем
+        // чтобы страница не зависала
+
+        aiDescription:
+          "",
+
+
+        highlights:
+          [],
+
+
+      };
+
+    });
+
+
+
+  return episodes;
 
 }

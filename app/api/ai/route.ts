@@ -5,35 +5,13 @@ const client = new Groq({
 });
 
 
-function cleanHtml(text: string = "") {
-  return text
-    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&quot;/gi, '"')
-    .replace(/&amp;/gi, "&")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-
-
 export async function POST(request: Request) {
 
   try {
 
     const body = await request.json();
 
-
-    const title = body.title || "";
-
-    const description = cleanHtml(body.description || "");
-
-
-    console.log("TITLE:", title);
-    console.log("DESCRIPTION:", description.slice(0,500));
-
+    console.log("AI REQUEST:", body);
 
 
     const response = await client.chat.completions.create({
@@ -42,58 +20,41 @@ export async function POST(request: Request) {
 
       temperature: 0.7,
 
-
       messages: [
 
         {
           role: "system",
-
           content: `
-Ты — редактор подкаста "тчк. баланса".
+Ты редактор подкаста "тчк. баланса".
 
-Ты пишешь НЕ описание выпуска.
-Ты пишешь короткий анонс, после которого хочется нажать "слушать".
+Это авторский подкаст про бухгалтерию, финансы и технологии.
+
+Твоя задача — написать короткое описание выпуска, после которого профессионалу захочется нажать "слушать".
+
+Не пересказывай RSS.
+Не копируй исходный текст.
+Не перечисляй темы.
+Не пиши учебник.
 
 Стиль:
-- умное бизнес-медиа;
-- живой человеческий язык;
-- тонкий бухгалтерский юмор;
-- легкая ирония;
-- без пафоса;
-- без маркетинговых штампов.
+- умный;
+- живой;
+- с легкой бухгалтерской самоиронией;
+- без желтой прессы;
+- без кликбейта;
+- как хороший деловой подкаст.
 
-Запрещено:
+Пиши про реальную боль слушателя.
 
-❌ "В этом выпуске мы поговорим..."
-❌ "Разберем тему..."
-❌ "Будет полезно бухгалтерам..."
-❌ пересказывать содержание
-❌ перечислять темы
-❌ копировать исходное описание
-❌ писать учебник
+Например:
+"Все думают, что главный риск бухгалтера — ошибка в проводке. Иногда проблема начинается раньше — с одного письма, одного звонка и одной слишком уверенной просьбы."
 
-Нужно:
-
-Начать с боли, странного вопроса или знакомой ситуации.
-
-Пример интонации:
-
-"Главбуху не нужен хакер в капюшоне. Иногда достаточно одного звонка и слишком доверчивого клика."
-
-или
-
-"Самая дорогая ошибка в бухгалтерии иногда начинается не с проводки. А с письма "срочно оплатить".
-
-Покажи конфликт:
-человек vs мошенник,
-бухгалтер vs новые технологии,
-бизнес vs хаос.
-
-Используй только факты из исходного текста.
+Но не придумывай события, которых нет.
 
 Верни строго JSON:
 
 {
+"title":"",
 "description":"",
 "highlights":[
 "",
@@ -102,35 +63,38 @@ export async function POST(request: Request) {
 ]
 }
 
-
 Ограничения:
 
+title:
+- не меняй название выпуска;
+- максимум 120 символов.
+
 description:
-- максимум 350 символов
+- 3-5 предложений;
+- максимум 500 символов.
 
 highlights:
-- максимум 80 символов каждый
+- 3 короткие мысли;
+- каждый пункт максимум 90 символов.
 
 Только JSON.
 Без Markdown.
+Без комментариев.
 `
         },
 
 
         {
           role: "user",
-
           content: `
-
 Название выпуска:
 
-${title}
+${body.title}
 
 
-Исходное описание:
+Описание выпуска:
 
-${description}
-
+${body.description}
 `
         }
 
@@ -139,70 +103,37 @@ ${description}
     });
 
 
-
-    const raw =
-      response.choices[0].message.content || "";
-
+    const text =
+      response.choices[0]?.message?.content || "";
 
 
-    console.log("AI RAW:", raw);
+    console.log("AI RESPONSE:", text);
 
 
-
-    const cleaned = raw
+    const cleaned = text
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
 
-
-    const ai = JSON.parse(cleaned);
-
+    const json = JSON.parse(cleaned);
 
 
-    return new Response(
-
-      JSON.stringify({
-
-        title: title,
-
-        description: ai.description,
-
-        highlights: ai.highlights
-
-      }),
-
-      {
-        status:200,
-
-        headers:{
-          "Content-Type":
-          "application/json; charset=utf-8"
-        }
-      }
-
-    );
+    return Response.json(json);
 
 
-  } catch(error){
+  } catch (error) {
 
     console.error("AI ERROR:", error);
 
 
-    return new Response(
-
-      JSON.stringify({
-        error:"AI generation failed"
-      }),
-
+    return Response.json(
       {
-        status:500,
-        headers:{
-          "Content-Type":
-          "application/json; charset=utf-8"
-        }
+        error: "AI generation failed"
+      },
+      {
+        status:500
       }
-
     );
 
   }

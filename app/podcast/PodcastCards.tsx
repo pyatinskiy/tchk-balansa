@@ -1,12 +1,13 @@
 type Episode = {
-
   title?: string;
   link?: string;
   pubDate?: string;
-  summary?: string;
   audio?: string;
   image?: string;
 
+  aiDescription?: string;
+
+  highlights?: string[];
 };
 
 
@@ -17,111 +18,204 @@ export default function PodcastCards({
 }) {
 
 
-return (
+  return (
 
-<div className="mt-16 grid gap-8">
-
-
-{episodes.map((episode,index)=>(
+    <div className="mt-16 grid gap-10">
 
 
-<article
-key={index}
-className="
-border border-zinc-200
-rounded-3xl
-p-8
-"
->
+      {episodes.map((episode, index) => (
+
+        <article
+          key={index}
+          className="
+            border
+            border-zinc-200
+            rounded-3xl
+            p-8
+            hover:border-orange-400
+            transition
+          "
+        >
 
 
-<div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6">
 
 
-{episode.image && (
 
-<img
-src={episode.image}
-alt={episode.title}
-className="
-w-40
-h-40
-rounded-2xl
-object-cover
-"
-/>
+            {/* Обложка из RSS */}
 
-)}
+            {episode.image && (
 
+              <img
+                src={episode.image}
+                alt={episode.title || ""}
+                className="
+                  w-40
+                  h-40
+                  rounded-2xl
+                  object-cover
+                "
+              />
 
-<div>
-
-<p className="text-sm text-zinc-400">
-{episode.pubDate}
-</p>
+            )}
 
 
-<h2 className="mt-3 text-3xl font-semibold">
-{episode.title}
-</h2>
+
+            {/* Дата */}
+
+            <p className="text-sm text-zinc-400">
+
+              {episode.pubDate}
+
+            </p>
 
 
-</div>
 
 
-<p className="text-zinc-600 leading-7">
+            {/* Название из RSS */}
 
-{episode.summary
-?.replace(/<[^>]*>/g," ")
-.replace(/\s+/g," ")
-.slice(0,500)}
+            <h2
+              className="
+                text-3xl
+                font-semibold
+                tracking-tight
+              "
+            >
 
-</p>
+              {episode.title}
 
-
-{episode.audio && (
-
-<audio
-controls
-className="w-full"
->
-
-<source
-src={episode.audio}
-type="audio/mpeg"
-/>
-
-</audio>
-
-)}
+            </h2>
 
 
-<a
-href={episode.link}
-target="_blank"
-className="
-text-orange-500
-hover:underline
-"
->
-
-Открыть выпуск →
-
-</a>
 
 
-</div>
+
+            {/* AI описание */}
+
+            {episode.aiDescription && (
+
+              <p
+                className="
+                  text-lg
+                  leading-8
+                  text-zinc-700
+                "
+              >
+
+                {episode.aiDescription}
+
+              </p>
+
+            )}
 
 
-</article>
 
 
-))}
 
 
-</div>
+            {/* AI тезисы */}
 
-);
+            {episode.highlights &&
+              episode.highlights.length > 0 && (
 
+              <ul
+                className="
+                  mt-2
+                  space-y-3
+                  text-zinc-600
+                "
+              >
+
+                {episode.highlights.map(
+                  (item, i) => (
+
+                    <li
+                      key={i}
+                      className="
+                        flex
+                        gap-3
+                      "
+                    >
+
+                      <span className="text-orange-500">
+                        •
+                      </span>
+
+                      <span>
+                        {item}
+                      </span>
+
+                    </li>
+
+                  )
+                )}
+
+              </ul>
+
+            )}
+
+
+
+
+
+
+            {/* Плеер из RSS */}
+
+            {episode.audio && (
+
+              <audio
+                controls
+                className="w-full mt-4"
+              >
+
+                <source
+                  src={episode.audio}
+                  type="audio/mpeg"
+                />
+
+              </audio>
+
+            )}
+
+
+
+
+
+
+
+            {/* Ссылка на Podster из RSS */}
+
+            {episode.link && (
+
+              <a
+                href={episode.link}
+                target="_blank"
+                className="
+                  text-orange-500
+                  hover:underline
+                  text-sm
+                "
+              >
+
+                Открыть выпуск на Podster →
+
+              </a>
+
+            )}
+
+
+
+          </div>
+
+
+        </article>
+
+
+      ))}
+
+
+    </div>
+
+  );
 
 }
