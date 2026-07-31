@@ -1,44 +1,54 @@
 "use client";
 
-import { Episode } from "@/lib/rss";
+import type { Episode } from "@/app/lib/rss";
 
 export default function PodcastPlayer({
   episode,
+  onClose,
 }: {
   episode: Episode;
+  onClose: () => void;
 }) {
   return (
-    <div className="mt-10 rounded-3xl border border-zinc-200 p-6 text-left bg-white shadow-sm">
+    <div className="relative overflow-hidden rounded-[32px] border border-zinc-300 bg-white p-8 shadow-2xl">
 
-      <div className="flex gap-5 items-center">
+      {/* фирменная внутренняя рамка */}
+      <div className="pointer-events-none absolute inset-3 rounded-[24px] border border-orange-200" />
 
+      <button
+        onClick={onClose}
+        className="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-xl text-zinc-500 transition hover:border-orange-400 hover:text-orange-500"
+        aria-label="Закрыть"
+      >
+        ×
+      </button>
+
+      <div className="relative flex items-center gap-6">
         {episode.image && (
           <img
             src={episode.image}
             alt={episode.title}
-            className="w-20 h-20 rounded-2xl object-cover"
+            className="h-24 w-24 rounded-2xl object-cover"
           />
         )}
 
-        <div>
-          <p className="text-sm text-zinc-400">
+        <div className="pr-12 text-left">
+          <div className="flex items-center gap-2 text-sm text-zinc-500">
+            <span className="text-orange-500">●</span>
             Последний выпуск
-          </p>
+          </div>
 
-          <h3 className="text-xl font-semibold">
+          <h3 className="mt-3 text-2xl font-semibold leading-tight">
             {episode.title}
           </h3>
         </div>
-
       </div>
-
 
       <audio
         controls
-        className="w-full mt-6"
         src={episode.audio}
+        className="relative mt-8 w-full"
       />
-
     </div>
   );
 }
